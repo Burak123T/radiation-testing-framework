@@ -40,7 +40,6 @@ This project provides a **COTS (Commercial Off-The-Shelf) Radiation Testing Fram
 │   │   │   ├── storage_monitor.bpf.c  # eBPF program for Storage errors
 │   │   │── 📂 user
 │   │   │   ├── main.c                  # Main orchestrator for all event collection
-│   │   │   ├── event_handler.c         # Main event polling loop
 │   │   │   ├── cpu_event_handler.c     # Handles CPU/MCE events + setup
 │   │   │   ├── mem_event_handler.c     # Handles Memory ECC events + setup
 │   │   │   ├── storage_event_handler.c # Handles Storage errors + setup
