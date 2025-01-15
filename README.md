@@ -53,7 +53,7 @@ This project provides a **COTS (Commercial Off-The-Shelf) Radiation Testing Fram
 
 ## **Installation & Setup**
 
-### **1️⃣ Install Required Dependencies**
+### **:one: Install Required Dependencies**
 
 Ensure that `clang`, `bpftool`, and `gcc` are installed:
 
@@ -62,14 +62,14 @@ sudo apt update
 sudo $ apt install clang libelf1 libelf-dev zlib1g-dev
 ```
 
-### **2️⃣ Clone the Repository**
+### **:two: Clone the Repository**
 
 ```sh
 git clone --recurse-submodules https://github.com/Resource-Aware-Data-systems-RAD/radiation-testing-framework
 cd radiation-testing-framework
 ```
 
-### **3️⃣ Build the Project**
+### **:three: Build the Project**
 
 ```sh
 mkdir build && cd build
@@ -77,7 +77,7 @@ cmake ../framework
 make
 ```
 
-### **4️⃣ Run the Monitoring System**
+### **:four: Run the Monitoring System**
 
 ```sh
 sudo ./radiation_testing_framework
@@ -107,6 +107,7 @@ sudo ./test_storage_events
 
 - Use `bpftool prog show` to inspect loaded eBPF programs.
 - Use `dmesg` or `trace_pipe` to view kernel logs:
+  
   ```sh
   cat /sys/kernel/debug/tracing/trace_pipe
   ```
