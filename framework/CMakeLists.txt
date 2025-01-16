@@ -92,7 +92,8 @@ endforeach()
 
 # Create a single executable from the files found in src/user
 file(GLOB user_sources src/user/*.c)
-add_executable(radiation_testing_framework ${user_sources})
+file(GLOB logger_sources src/logger/*.c)
+add_executable(radiation_testing_framework ${user_sources} ${logger_sources})
 
 # Link all skeletons to the single executable
 target_link_libraries(radiation_testing_framework ${skeletons} inih)

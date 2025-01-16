@@ -3,6 +3,7 @@
 #include <bpf/libbpf.h>
 #include "../../include/event_types.h"
 #include "../../include/event_handler.h"
+#include "../../include/logger.h"
 #include "storage_monitor.skel.h"
 
 static struct storage_monitor_bpf *storage_skel;
@@ -10,9 +11,12 @@ static struct ring_buffer *rb_storage;
 static storage_handler_config_t *storage_config;
 
 int handle_storage_event(void *ctx, void *data, uint64_t data_sz) {
-    struct storage_event_t *event = data;
-    printf("[STORAGE ERROR] Device: %u | Sector: %lu | Error Code: %u | Time: %lu ns\n",
+    storage_event_t *event = data;
+    char* log_string = (char*)malloc(100);
+    sprintf(log_string, "[STORAGE ERROR] Device: %u | Sector: %lu | Error Code: %u | Time: %lu ns\n",
            event->device, event->sector, event->error_code, event->timestamp);
+    logger_log(log_string);
+    free(log_string);
     return 0;
 }
 

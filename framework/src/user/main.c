@@ -3,8 +3,10 @@
 #include <argp.h>
 #include <time.h>
 #include <signal.h>
+#include <string.h>
 #include <bpf/libbpf.h>
 #include "../../include/event_handler.h"
+#include "../../include/logger.h"
 #include "../../lib/inih/ini.h"
 
 #define MAX_HANDLERS 10
@@ -139,6 +141,8 @@ int main(int argc, char **argv) {
 
     printf("Monitoring system faults... Press Ctrl+C to stop.\n");
 
+    logger_init(env.config_file); // this is not the correct config file
+
     while (!stop) {
         for (int i = 0; i < active_handlers_count; i++) {
             if (active_handlers[i]->poll() < 0) {
@@ -151,6 +155,9 @@ int main(int argc, char **argv) {
     for (int i = 0; i < active_handlers_count; i++) {
         active_handlers[i]->cleanup();
     }
+
+    logger_flush();
+    logger_close();
 
     free(env.config_file);
 

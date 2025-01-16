@@ -3,6 +3,7 @@
 #include <bpf/libbpf.h>
 #include "../../include/event_types.h"
 #include "../../include/event_handler.h"
+#include "../../include/logger.h"
 #include "mem_monitor.skel.h"
 
 static struct mem_monitor_bpf *mem_skel;
@@ -10,9 +11,12 @@ static struct ring_buffer *rb_mem;
 static mem_handler_config_t *mem_config;
 
 int handle_mem_event(void *ctx, void *data, uint64_t data_sz) {
-    struct mem_event_t *event = data;
-    printf("[MEMORY ERROR] Page: %lu | Type: %u | PID: %u | Time: %lu ns\n",
+    mem_event_t *event = data;
+    char* log_string = (char*)malloc(100);
+    sprintf(log_string, "[MEMORY ERROR] Page: %lu | Type: %u | PID: %u | Time: %lu ns\n",
            event->page, event->error_type, event->pid, event->timestamp);
+    logger_log(log_string);
+    free(log_string);
     return 0;
 }
 

@@ -3,6 +3,7 @@
 #include <bpf/libbpf.h>
 #include "../../include/event_types.h"
 #include "../../include/event_handler.h"
+#include "../../include/logger.h"
 #include "cpu_monitor.skel.h"
 
 static struct cpu_monitor_bpf *cpu_skel;
@@ -10,9 +11,12 @@ static struct ring_buffer *rb_cpu;
 static cpu_handler_config_t *cpu_config;
 
 int handle_cpu_event(void *ctx, void *data, uint64_t data_sz) {
-    struct mce_event_t *event = data;
-    printf("[CPU/MCE] CPU %d | Status: 0x%lx | Addr: 0x%lx | Misc: 0x%lx | Time: %lu ns\n",
+    mce_event_t *event = data;
+    char* log_string = (char*)malloc(100);
+    sprintf(log_string, "[CPU/MCE] CPU %d | Status: 0x%lx | Addr: 0x%lx | Misc: 0x%lx | Time: %lu ns\n",
            event->cpu, event->status, event->addr, event->misc, event->timestamp);
+    logger_log(log_string);
+    free(log_string);
     return 0;
 }
 
