@@ -10,3 +10,6 @@
 [submodule "vmlinux.h"]
 	path = vmlinux.h
 	url = https://github.com/libbpf/vmlinux.h.git
+[submodule "framework/lib/inih"]
+	path = framework/lib/inih
+	url = https://github.com/benhoyt/inih.git

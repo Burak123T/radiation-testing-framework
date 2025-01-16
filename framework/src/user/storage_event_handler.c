@@ -7,6 +7,7 @@
 
 static struct storage_monitor_bpf *storage_skel;
 static struct ring_buffer *rb_storage;
+static storage_handler_config_t *storage_config;
 
 int handle_storage_event(void *ctx, void *data, uint64_t data_sz) {
     struct storage_event_t *event = data;
@@ -15,7 +16,7 @@ int handle_storage_event(void *ctx, void *data, uint64_t data_sz) {
     return 0;
 }
 
-int setup_storage_monitor() {
+int setup_storage_monitor(void *config) {
     struct bpf_object_open_opts opts = {
         .sz = sizeof(struct bpf_object_open_opts),
         .object_name = "storage_monitor",
@@ -49,4 +50,38 @@ void cleanup_storage_monitor() {
     ring_buffer__free(rb_storage);
     storage_monitor_bpf__destroy(storage_skel);
 }
+
+int add_storage_config_key(const char* name, const char* value) {
+    if (!storage_config) {
+        storage_config = (storage_handler_config_t *)malloc(sizeof(storage_handler_config_t));
+        if (!storage_config) {
+            fprintf(stderr, "Failed to allocate memory for Storage handler config\n");
+            return 0; // error
+        }
+    }
+
+    if (strcmp(name, "param1") == 0) {
+        storage_config->param1 = atoi(value);
+    } else if (strcmp(name, "param2") == 0) {
+        storage_config->param2 = malloc(strlen(value) + 1);
+        if (!storage_config->param2) {
+            fprintf(stderr, "Failed to allocate memory for Storage handler config\n");
+            return 0; // error
+        }
+        strcpy(storage_config->param2, value);
+    } else {
+        fprintf(stderr, "Unknown configuration key: %s\n", name);
+        return 0; // not found
+    }
+
+    return 1; // success
+}
+
+handler_t storage_handler = {
+    .name = "storage_handler",
+    .setup = setup_storage_monitor,
+    .poll = poll_storage_events,
+    .cleanup = cleanup_storage_monitor,
+    .add_config_key = add_storage_config_key,
+};
 

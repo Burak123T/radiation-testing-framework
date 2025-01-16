@@ -7,6 +7,7 @@
 
 static struct mem_monitor_bpf *mem_skel;
 static struct ring_buffer *rb_mem;
+static mem_handler_config_t *mem_config;
 
 int handle_mem_event(void *ctx, void *data, uint64_t data_sz) {
     struct mem_event_t *event = data;
@@ -15,7 +16,7 @@ int handle_mem_event(void *ctx, void *data, uint64_t data_sz) {
     return 0;
 }
 
-int setup_mem_monitor() {
+int setup_mem_monitor(void *config) {
     struct bpf_object_open_opts opts = {
         .sz = sizeof(struct bpf_object_open_opts),
         .object_name = "mem_monitor",
@@ -49,3 +50,37 @@ void cleanup_mem_monitor() {
     ring_buffer__free(rb_mem);
     mem_monitor_bpf__destroy(mem_skel);
 }
+
+int add_mem_config_key(const char* name, const char* value) {
+    if (!mem_config) {
+        mem_config = (mem_handler_config_t *)malloc(sizeof(mem_handler_config_t));
+        if (!mem_config) {
+            fprintf(stderr, "Failed to allocate memory for Memory handler config\n");
+            return 0; //  error
+        }
+    }
+
+    if (strcmp(name, "param1") == 0) {
+        mem_config->param1 = atoi(value);
+    } else if (strcmp(name, "param2") == 0) {
+        mem_config->param2 = malloc(strlen(value) + 1);
+        if (!mem_config->param2) {
+            fprintf(stderr, "Failed to allocate memory for Memory handler config\n");
+            return 0; // error
+        }
+        strcpy(mem_config->param2, value);
+    } else {
+        fprintf(stderr, "Unknown configuration key: %s\n", name);
+        return 0; // not found
+    }
+
+    return 1; // success
+}
+
+handler_t mem_handler = {
+    .name = "mem_handler",
+    .setup = setup_mem_monitor,
+    .poll = poll_mem_events,
+    .cleanup = cleanup_mem_monitor,
+    .add_config_key = add_mem_config_key,
+};

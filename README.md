@@ -2,6 +2,7 @@
 
 ## **TO-DO**
 
+- [x] Add configuration using file (Config is currently not being utilized besides activating different handlers)
 - [ ] Find universal memory failure tracepoint for the memory monitoring
 - [ ] Add more storage and FS related failure tracepoints
 - [ ] Add tests for triggering errors

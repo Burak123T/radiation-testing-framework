@@ -1,4 +1,3 @@
-// include/event_types.h
 #ifndef EVENT_TYPES_H
 #define EVENT_TYPES_H
 

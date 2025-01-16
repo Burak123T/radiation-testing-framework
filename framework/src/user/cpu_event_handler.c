@@ -7,6 +7,7 @@
 
 static struct cpu_monitor_bpf *cpu_skel;
 static struct ring_buffer *rb_cpu;
+static cpu_handler_config_t *cpu_config;
 
 int handle_cpu_event(void *ctx, void *data, uint64_t data_sz) {
     struct mce_event_t *event = data;
@@ -15,7 +16,7 @@ int handle_cpu_event(void *ctx, void *data, uint64_t data_sz) {
     return 0;
 }
 
-int setup_cpu_monitor() {
+int setup_cpu_monitor(void *config) {
     struct bpf_object_open_opts opts = {
         .sz = sizeof(struct bpf_object_open_opts),
         .object_name = "cpu_monitor",
@@ -49,3 +50,37 @@ void cleanup_cpu_monitor() {
     ring_buffer__free(rb_cpu);
     cpu_monitor_bpf__destroy(cpu_skel);
 }
+
+int add_cpu_config_key(const char* name, const char* value) {
+    if (!cpu_config) {
+        cpu_config = (cpu_handler_config_t *)malloc(sizeof(cpu_handler_config_t));
+        if (!cpu_config) {
+            fprintf(stderr, "Failed to allocate memory for CPU handler config\n");
+            return 0; // error
+        }
+    }
+
+    if (strcmp(name, "param1") == 0) {
+        cpu_config->param1 = atoi(value);
+    } else if (strcmp(name, "param2") == 0) {
+        cpu_config->param2 = (char *)malloc(strlen(value) + 1);
+        if (!cpu_config->param2) {
+            fprintf(stderr, "Failed to allocate memory for CPU handler config param2\n");
+            return 0; // error
+        }
+        strcpy(cpu_config->param2, value);
+    } else {
+        fprintf(stderr, "Unknown configuration key for CPU handler: %s\n", name);
+        return 0; // not found
+    }
+
+    return 1; // success
+}
+
+handler_t cpu_handler = {
+    .name = "cpu_handler",
+    .setup = setup_cpu_monitor,
+    .poll = poll_cpu_events,
+    .cleanup = cleanup_cpu_monitor,
+    .add_config_key = add_cpu_config_key,
+};

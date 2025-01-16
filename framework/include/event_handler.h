@@ -1,18 +1,33 @@
 #ifndef EVENT_HANDLER_H
 #define EVENT_HANDLER_H
 
-#include <bpf/libbpf.h>
+// Generic handler configuration interface
+typedef struct {
+    const char* name;
+    int (*setup)(void *config);
+    int (*poll)();
+    void (*cleanup)();
+    int (*add_config_key)(const char* name, const char* value);
+} handler_t;
 
-int setup_cpu_monitor();
-int setup_mem_monitor();
-int setup_storage_monitor();
+typedef struct {
+    int param1;
+    char* param2;
+} cpu_handler_config_t;
 
-int poll_cpu_events();
-int poll_mem_events();
-int poll_storage_events();
+typedef struct {
+    int param1;
+    char* param2;
+} mem_handler_config_t;
 
-void cleanup_cpu_monitor();
-void cleanup_mem_monitor();
-void cleanup_storage_monitor();
+typedef struct {
+    int param1;
+    char* param2;
+} storage_handler_config_t;
+
+// Declare the handlers
+extern handler_t cpu_handler;
+extern handler_t mem_handler;
+extern handler_t storage_handler;
 
 #endif // EVENT_HANDLER_H

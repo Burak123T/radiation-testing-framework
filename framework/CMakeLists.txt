@@ -73,6 +73,8 @@ set(LIBBPF_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/libbpf)
 set(LIBBPF_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/libbpf/libbpf.a)
 find_package(BpfObject REQUIRED)
 
+# Add inih library
+add_library(inih STATIC lib/inih/ini.c)
 
 # Create an executable for each BPF application
 file(GLOB bpf_apps src/bpf/*.bpf.c)
@@ -93,7 +95,7 @@ file(GLOB user_sources src/user/*.c)
 add_executable(radiation_testing_framework ${user_sources})
 
 # Link all skeletons to the single executable
-target_link_libraries(radiation_testing_framework ${skeletons})
+target_link_libraries(radiation_testing_framework ${skeletons} inih)
 
 # # Create an executable for each application
 # file(GLOB apps *.bpf.c)
