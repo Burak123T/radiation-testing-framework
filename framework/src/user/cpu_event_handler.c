@@ -16,7 +16,7 @@ int handle_cpu_event(void *ctx, void *data, uint64_t data_sz) {
     return 0;
 }
 
-int setup_cpu_monitor(void *config) {
+int setup_cpu_monitor() {
     struct bpf_object_open_opts opts = {
         .sz = sizeof(struct bpf_object_open_opts),
         .object_name = "cpu_monitor",
@@ -49,6 +49,8 @@ int poll_cpu_events() {
 void cleanup_cpu_monitor() {
     ring_buffer__free(rb_cpu);
     cpu_monitor_bpf__destroy(cpu_skel);
+    free(cpu_config->param2);
+    free(cpu_config);
 }
 
 int add_cpu_config_key(const char* name, const char* value) {

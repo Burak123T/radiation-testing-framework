@@ -16,7 +16,7 @@ int handle_storage_event(void *ctx, void *data, uint64_t data_sz) {
     return 0;
 }
 
-int setup_storage_monitor(void *config) {
+int setup_storage_monitor() {
     struct bpf_object_open_opts opts = {
         .sz = sizeof(struct bpf_object_open_opts),
         .object_name = "storage_monitor",
@@ -49,6 +49,8 @@ int poll_storage_events() {
 void cleanup_storage_monitor() {
     ring_buffer__free(rb_storage);
     storage_monitor_bpf__destroy(storage_skel);
+    free(storage_config->param2);
+    free(storage_config);
 }
 
 int add_storage_config_key(const char* name, const char* value) {

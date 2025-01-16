@@ -4,7 +4,7 @@
 // Generic handler configuration interface
 typedef struct {
     const char* name;
-    int (*setup)(void *config);
+    int (*setup)();
     int (*poll)();
     void (*cleanup)();
     int (*add_config_key)(const char* name, const char* value);

@@ -70,15 +70,7 @@ static const struct argp argp = {
 	.doc = argp_program_doc,
 };
 
-// static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
-// {
-// 	if (level == LIBBPF_DEBUG && !env.verbose)
-// 		return 0;
-// 	return vfprintf(stderr, format, args);
-// }
-
 static int handler(void* user, const char* section, const char* name, const char* value) {
-    handler_t** handler_ptr = g_available_handlers;
     printf("section: %s, name: %s, value: %s\n", section, name, value);
 
     // loop through the array and add key if handler active
@@ -89,6 +81,7 @@ static int handler(void* user, const char* section, const char* name, const char
     }
 
     // if handler not active, loop through the available handlers and activate the one that matches the section
+    handler_t** handler_ptr = g_available_handlers;
     while (*handler_ptr) {
         if (strcmp(section, (*handler_ptr)->name) == 0) {
             active_handlers[active_handlers_count] = *handler_ptr;
@@ -114,6 +107,7 @@ int main(int argc, char **argv) {
 
     if (ini_parse(env.config_file, handler, NULL) < 0) {
         printf("Can't load '%s'\n", env.config_file);
+        free(env.config_file);
         return 1;
     }
 
@@ -122,40 +116,43 @@ int main(int argc, char **argv) {
         printf("Active handler: %s\n", active_handlers[i]->name);
     }
 
-    /* Set up libbpf errors and debug info callback */
-	// libbpf_set_print(libbpf_print_fn);
-
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
 
-    if (
-        setup_cpu_monitor() != 0 || 
-        // setup_mem_monitor() != 0 || 
-        setup_storage_monitor() != 0
-    ) {
-        fprintf(stderr, "Failed to initialize event monitoring\n");
-        cleanup_cpu_monitor();
-        // cleanup_mem_monitor();
-        cleanup_storage_monitor();
+    int status = 0;
+
+    for (int i = 0; i < active_handlers_count; i++) {
+        if (active_handlers[i]->setup() != 0) {
+            fprintf(stderr, "Failed to setup handler: %s\n", active_handlers[i]->name);
+            status = -1;
+            break;
+        }
+    }
+
+    if (status != 0) {
+        for (int i = 0; i < active_handlers_count; i++) {
+            active_handlers[i]->cleanup();
+        }
+        free(env.config_file);
         return EXIT_FAILURE;
     }
 
     printf("Monitoring system faults... Press Ctrl+C to stop.\n");
 
     while (!stop) {
-        if (
-            poll_cpu_events() < 0 || 
-            // poll_mem_events() < 0 || 
-            poll_storage_events() < 0
-        ) {
-            fprintf(stderr, "Error polling event buffers\n");
-            break;
+        for (int i = 0; i < active_handlers_count; i++) {
+            if (active_handlers[i]->poll() < 0) {
+                fprintf(stderr, "Error polling events for handler: %s\n", active_handlers[i]->name);
+                break;
+            }
         }
     }
 
-    cleanup_cpu_monitor();
-    // cleanup_mem_monitor();
-    cleanup_storage_monitor();
+    for (int i = 0; i < active_handlers_count; i++) {
+        active_handlers[i]->cleanup();
+    }
+
+    free(env.config_file);
 
     return EXIT_SUCCESS;
 }

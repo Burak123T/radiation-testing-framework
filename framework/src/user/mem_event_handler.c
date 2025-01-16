@@ -16,7 +16,7 @@ int handle_mem_event(void *ctx, void *data, uint64_t data_sz) {
     return 0;
 }
 
-int setup_mem_monitor(void *config) {
+int setup_mem_monitor() {
     struct bpf_object_open_opts opts = {
         .sz = sizeof(struct bpf_object_open_opts),
         .object_name = "mem_monitor",
@@ -49,6 +49,8 @@ int poll_mem_events() {
 void cleanup_mem_monitor() {
     ring_buffer__free(rb_mem);
     mem_monitor_bpf__destroy(mem_skel);
+    free(mem_config->param2);
+    free(mem_config);
 }
 
 int add_mem_config_key(const char* name, const char* value) {
