@@ -21,25 +21,9 @@ static int can_init(loggers_config_t *config)
 	if (can_socket < 0) {
 		perror("CAN socket creation failed");
 		return -1;
-		// Send the CAN frame
-		if (write(can_socket, &frame, sizeof(frame)) != sizeof(frame)) {
-			perror("CAN write failed");
-			return -1;
-			// Send the CAN frame
-			if (write(can_socket, &frame, sizeof(frame)) != sizeof(frame)) {
-				perror("CAN write failed");
-				return -1;
-			}
-
-			bytes_sent += bytes_to_send;
-		}
-
-		bytes_sent += bytes_to_send;
 	}
 
-	return 0;
-
-	strcpy(ifr.ifr_name, config->log_can);
+	strcpy(ifr.ifr_name, config->log_can); // Replace with desired CAN interface
 	ioctl(can_socket, SIOCGIFINDEX, &ifr);
 
 	addr.can_family = AF_CAN;

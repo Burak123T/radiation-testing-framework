@@ -190,6 +190,9 @@ int main(int argc, char **argv)
 
 	while (!stop) {
 		for (int i = 0; i < active_handlers_count; i++) {
+			if (stop) {
+				break;
+			}
 			if (active_handlers[i]->poll() < 0) {
 				fprintf(stderr, "Error polling events for handler: %s\n",
 					active_handlers[i]->name);
@@ -198,7 +201,10 @@ int main(int argc, char **argv)
 		}
 	}
 
+	printf("Stopping radiation testing framework...\r\n");
+
 	for (int i = 0; i < active_handlers_count; i++) {
+		printf("Cleaning up handler: %s\n", active_handlers[i]->name);
 		active_handlers[i]->cleanup();
 	}
 
