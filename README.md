@@ -3,10 +3,10 @@
 ## **TO-DO**
 
 - [x] Add configuration using file (Config is currently not being utilized besides activating different handlers)
+- [x] Structured logging and offloading to other device using UART and CAN (should be extensible to other user-defined interfaces)
 - [ ] Find universal memory failure tracepoint for the memory monitoring
 - [ ] Add more storage and FS related failure tracepoints
 - [ ] Add tests for triggering errors
-- [ ] Structured logging and offloading to other device using UART and CAN (should be extensible to other user-defined interfaces)
 - [ ] Provide API for tracking user-space applications / benchmarks
 
 ## **Overview**

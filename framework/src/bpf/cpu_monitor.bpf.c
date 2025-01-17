@@ -10,9 +10,9 @@ struct {
 
 SEC("tracepoint/mce/mce_record")
 int trace_mce_event(struct trace_event_raw_mce_record *ctx) {
-    struct mce_event_t *event;
+    mce_event_t *event;
     
-    event = bpf_ringbuf_reserve(&mce_events, sizeof(struct mce_event_t), 0);
+    event = bpf_ringbuf_reserve(&mce_events, sizeof(mce_event_t), 0);
     if (!event) return 0;
 
     event->timestamp = bpf_ktime_get_ns();

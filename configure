@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Save the current directory
+current_dir=$(pwd)
+
+# Define the build directory
+build_dir=$current_dir"/build"
+
+# Remove the build directory if it exists
+if [ -d "$build_dir" ]; then
+    rm -rf "$build_dir"
+fi
+
+# Create the build directory
+mkdir "$build_dir"
+
+# Change to the build directory
+cd "$build_dir"
+
+# Run cmake and make
+cmake ../framework
+make
+
+# Return to the original directory
+cd "$current_dir"

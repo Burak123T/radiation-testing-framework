@@ -10,9 +10,9 @@ struct {
 
 SEC("tracepoint/memory/memory_failure")
 int trace_memory_failure(struct trace_event_raw_memory_failure_event *ctx) {
-    struct mem_event_t *event;
+    mem_event_t *event;
     
-    event = bpf_ringbuf_reserve(&mem_events, sizeof(struct mem_event_t), 0);
+    event = bpf_ringbuf_reserve(&mem_events, sizeof(mem_event_t), 0);
     if (!event) return 0;
 
     event->timestamp = bpf_ktime_get_ns();
