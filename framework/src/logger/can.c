@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include "../../include/logger.h"
 
+#define MAX_CAN_PAYLOAD 8 // Maximum bytes per CAN frame
+
 static int can_socket;
 
 static int can_init(loggers_config_t *config)
@@ -19,9 +21,25 @@ static int can_init(loggers_config_t *config)
 	if (can_socket < 0) {
 		perror("CAN socket creation failed");
 		return -1;
+		// Send the CAN frame
+		if (write(can_socket, &frame, sizeof(frame)) != sizeof(frame)) {
+			perror("CAN write failed");
+			return -1;
+			// Send the CAN frame
+			if (write(can_socket, &frame, sizeof(frame)) != sizeof(frame)) {
+				perror("CAN write failed");
+				return -1;
+			}
+
+			bytes_sent += bytes_to_send;
+		}
+
+		bytes_sent += bytes_to_send;
 	}
 
-	strcpy(ifr.ifr_name, config->log_can); // Replace with desired CAN interface
+	return 0;
+
+	strcpy(ifr.ifr_name, config->log_can);
 	ioctl(can_socket, SIOCGIFINDEX, &ifr);
 
 	addr.can_family = AF_CAN;
@@ -37,16 +55,33 @@ static int can_init(loggers_config_t *config)
 
 static int can_log(const char *message)
 {
-	struct can_frame frame;
-	frame.can_id = 0x123; // Use a fixed CAN ID
-	frame.can_dlc = strlen(message) > 8 ? 8 : strlen(message);
-	memcpy(frame.data, message, frame.can_dlc);
-
-	if (write(can_socket, &frame, sizeof(frame)) != sizeof(frame)) {
-		perror("CAN write failed");
+	if (can_socket < 0) {
+		fprintf(stderr, "CAN socket is not initialized.\n");
 		return -1;
 	}
 
+	struct can_frame frame;
+	size_t message_len = strlen(message);
+	size_t bytes_sent = 0;
+
+	// Split the message into multiple CAN frames if necessary
+	while (bytes_sent < message_len) {
+		// Prepare the CAN frame
+		memset(&frame, 0, sizeof(frame));
+		frame.can_id = 0x123; // Fixed CAN ID (modify as needed)
+
+		size_t bytes_to_send = (message_len - bytes_sent) > MAX_CAN_PAYLOAD ?
+					       MAX_CAN_PAYLOAD :
+					       (message_len - bytes_sent);
+		memcpy(frame.data, message + bytes_sent, bytes_to_send);
+		frame.can_dlc = bytes_to_send;
+
+		if (write(can_socket, &frame, sizeof(frame)) != sizeof(frame)) {
+			perror("CAN write failed");
+			return -1;
+		}
+		bytes_sent += bytes_to_send;
+	}
 	return 0;
 }
 
