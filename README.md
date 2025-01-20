@@ -7,7 +7,7 @@
 - [ ] Find universal memory failure tracepoint for the memory monitoring
 - [ ] Add more storage and FS related failure tracepoints
 - [ ] Add tests for triggering errors
-- [ ] Provide API for tracking user-space applications / benchmarks
+- [x] Provide API for tracking user-space applications / benchmarks (work in progress - only one example function is traces, needs to be expanded with more interesting examples, such as latency/throughput calculation)
 
 ## **Overview**
 
@@ -73,15 +73,13 @@ cd radiation-testing-framework
 ### **:three: Build the Project**
 
 ```sh
-mkdir build && cd build
-cmake ../framework
-make
+sudo ./configure
 ```
 
 ### **:four: Run the Monitoring System**
 
 ```sh
-sudo ./radiation_testing_framework
+sudo ./build/radiation_testing_framework -v -c framework/configs/all.ini
 ```
 
 ### **Individual Tests (To be uploaded)**
@@ -101,7 +99,7 @@ sudo ./test_storage_events
 1. Place new `.bpf.c` files in `framework/src/bpf/`
 2. Add new event handlers in `framework/src/user/`.
 3. Add type definitions to `framework/include/event_handler.h`
-4. Include setup, polling and cleanup functions in `framework/src/user/main.c`
+4. Make the handler available in `framework/src/user/main.c`
 5. Run the installation and setup steps again.
 
 ### **Debugging eBPF Programs**
