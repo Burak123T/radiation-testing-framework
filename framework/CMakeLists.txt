@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 
-cmake_minimum_required(VERSION 1.0)
-project(RadiationTestingFramework C)
+cmake_minimum_required(VERSION 3.10)
+project(RadiationTestingFramework C CXX)
 
 # Tell cmake where to find BpfObject module
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../tools/cmake)
@@ -97,3 +97,41 @@ add_executable(radiation_testing_framework ${user_sources} ${logger_sources})
 
 # Link all skeletons to the single executable
 target_link_libraries(radiation_testing_framework ${skeletons} inih)
+
+add_library(rad_logger SHARED 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/user_logger/rad_logger.c 
+)
+
+set_target_properties(rad_logger PROPERTIES
+  PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/rad_logger.h 
+)
+
+install(TARGETS rad_logger
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# # Find Pybind11
+# set(PYBIND11_FINDPYTHON ON)
+# find_package(pybind11 CONFIG REQUIRED)
+
+# # Add the Python module
+# pybind11_add_module(rad_logger_py
+#     ${CMAKE_CURRENT_SOURCE_DIR}/src/user_logger/python/rad_logger_pybind.cpp
+# )
+
+# # Link against the C library
+# target_link_libraries(rad_logger_py PRIVATE rad_logger)
+
+# execute_process(
+#     COMMAND python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+#     OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+#     OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
+
+# # Set installation rules (optional)
+# install(TARGETS rad_logger_py
+#   LIBRARY DESTINATION .
+# )
+
+

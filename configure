@@ -5,6 +5,7 @@ current_dir=$(pwd)
 
 # Define the build directory
 build_dir=$current_dir"/build"
+test_dir=$current_dir"/test"
 
 # Remove the build directory if it exists
 if [ -d "$build_dir" ]; then
@@ -19,6 +20,17 @@ cd "$build_dir"
 
 # Run cmake and make
 cmake ../framework
+cmake --build .
+cmake --install .
+
+if [ -d "$test_dir" ]; then
+    rm -rf "$test_dir"
+fi
+
+mkdir "$test_dir"
+cd "$test_dir" 
+
+cmake ../user_test
 make
 
 # Return to the original directory
