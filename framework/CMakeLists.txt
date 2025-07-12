@@ -1,4 +1,16 @@
 # SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+add_library(rad_logger SHARED 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/user_logger/rad_logger.c 
+)
+
+set_target_properties(rad_logger PROPERTIES
+  PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/rad_logger.h 
+)
+
+install(TARGETS rad_logger
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
 cmake_minimum_required(VERSION 3.10)
 project(RadiationTestingFramework C CXX)
@@ -98,18 +110,7 @@ add_executable(radiation_testing_framework ${user_sources} ${logger_sources})
 # Link all skeletons to the single executable
 target_link_libraries(radiation_testing_framework ${skeletons} inih)
 
-add_library(rad_logger SHARED 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/user_logger/rad_logger.c 
-)
 
-set_target_properties(rad_logger PROPERTIES
-  PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/rad_logger.h 
-)
-
-install(TARGETS rad_logger
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
 
 # # Find Pybind11
 # set(PYBIND11_FINDPYTHON ON)
