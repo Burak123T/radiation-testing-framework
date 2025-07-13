@@ -32,11 +32,17 @@ typedef struct {
 	char *param2;
 } uprobe_handler_config_t;
 
+typedef struct {
+	int param1;
+	char *param2;
+} inferencetime_handler_config_t;
+
 // Declare the handlers
 extern handler_t cpu_handler;
 extern handler_t mem_handler;
 extern handler_t storage_handler;
 extern handler_t uprobe_handler;
+extern handler_t inferencetime_handler;
 
 static int create_directory_if_not_exists(const char *path)
 {
