@@ -31,9 +31,11 @@ typedef struct {
 typedef struct {
     uint64_t timestamp;
     uint8_t cpu;
-    uint64_t status;
-    uint64_t addr;
-    uint64_t misc;
+    u64 mpidr;                 // Multiprocessor Affinity Register
+	u64 midr;                  // Main ID Register
+	u32 running_state;
+	u32 psci_state;            // Power State Coordination Interface
+	u8 affinity;
 } arm_event_t;
 
 #endif // EVENT_TYPES_H

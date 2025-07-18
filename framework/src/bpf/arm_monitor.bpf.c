@@ -17,9 +17,12 @@ int trace_mce_event(struct trace_event_raw_arm_event *ctx) {
 
     event->timestamp = bpf_ktime_get_ns();
     event->cpu = bpf_get_smp_processor_id();
-    event->status = ctx->status;
-    event->addr = ctx->addr;
-    event->misc = ctx->misc;
+
+    event->mpidr = ctx->mpidr;
+    event->midr = ctx->midr;
+    event->running_state = ctx->running_state;
+    event->psci_state = ctx->psci_state;
+    event->affinity = ctx->affinity;
 
     bpf_ringbuf_submit(event, 0);
     return 0;

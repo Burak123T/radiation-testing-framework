@@ -14,9 +14,10 @@ int handle_arm_event(void *ctx, void *data, uint64_t data_sz)
 {
 	mce_event_t *event = data;
 	char *log_string = (char *)malloc(100);
+
 	sprintf(log_string,
-		"[ARM] CPU %d | Status: 0x%lx | Addr: 0x%lx | Misc: 0x%lx | Time: %lu ns\n",
-		event->cpu, event->status, event->addr, event->misc, event->timestamp);
+	"[arm_event] CPU: %d | Time: %lu ns | mpdir: 0x%lx | mdir: 0x%lx | running_state: %u | psci_state: %u | affinity: %d",
+		event->cpu, event->time, event->mpdir, event->midr, event->running_state, event->psci_state, event->affinity);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
