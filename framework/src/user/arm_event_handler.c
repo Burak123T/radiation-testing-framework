@@ -15,9 +15,9 @@ int handle_arm_event(void *ctx, void *data, uint64_t data_sz)
 	arm_event_t *event = data;
 	char *log_string = (char *)malloc(128);
 
-	sprintf(log_string,
-	"[arm_event] CPU: %d | Time: %lu ns | mpdir: 0x%lx | mdir: 0x%lx | running_state: %u | psci_state: %u | affinity: %d",
-		event->cpu, event->time, event->mpidr, event->midr, event->running_state, event->psci_state, event->affinity);
+	sprintf(log_string, 
+	"[RAS arm_event] affinity level: %d; MPIDR: %016llx; MIDR: %016llx; running state: %d; PSCI state: %d", 
+	event->affinity, event->mpidr, event->midr, event->running_state, event->psci_state);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
