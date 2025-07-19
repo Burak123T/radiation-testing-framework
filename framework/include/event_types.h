@@ -27,4 +27,15 @@ typedef struct {
     uint32_t device;          // Block device ID
 } storage_event_t;
 
+// ARM event structure
+typedef struct {
+    uint64_t time;
+    uint8_t cpu;
+    uint64_t mpidr;                 // Multiprocessor Affinity Register
+	uint64_t midr;                  // Main ID Register
+	uint32_t running_state;
+	uint32_t psci_state;            // Power State Coordination Interface
+	uint8_t affinity;
+} arm_event_t;
+
 #endif // EVENT_TYPES_H
