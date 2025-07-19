@@ -12,12 +12,12 @@ static arm_handler_config_t *arm_config;
 
 int handle_arm_event(void *ctx, void *data, uint64_t data_sz)
 {
-	mce_event_t *event = data;
-	char *log_string = (char *)malloc(100);
+	arm_event_t *event = data;
+	char *log_string = (char *)malloc(128);
 
 	sprintf(log_string,
 	"[arm_event] CPU: %d | Time: %lu ns | mpdir: 0x%lx | mdir: 0x%lx | running_state: %u | psci_state: %u | affinity: %d",
-		event->cpu, event->time, event->mpdir, event->midr, event->running_state, event->psci_state, event->affinity);
+		event->cpu, event->time, event->mpidr, event->midr, event->running_state, event->psci_state, event->affinity);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
@@ -30,7 +30,7 @@ int setup_arm_monitor()
 		.object_name = "arm_monitor",
 	};
 
-	arm_skel = cpu_monitor_bpf__open_opts(&opts);
+	arm_skel = arm_monitor_bpf__open_opts(&opts);
 	if (!arm_skel) {
 		fprintf(stderr, "Failed to open ARM monitor BPF program\n");
 		return -1;
@@ -41,7 +41,7 @@ int setup_arm_monitor()
 		return -1;
 	}
 
-	rb_arm = ring_buffer__new(bpf_map__fd(arm_skel->maps.mce_events), handle_arm_event, NULL,
+	rb_arm = ring_buffer__new(bpf_map__fd(arm_skel->maps.arm_events), handle_arm_event, NULL,
 				  NULL);
 	if (!rb_arm) {
 		fprintf(stderr, "Failed to create ring buffer for ARM events\n");
@@ -77,7 +77,7 @@ void cleanup_arm_monitor()
 	bpf_program__unpin(arm_skel->progs.trace_arm_event,
 			   "/sys/fs/bpf/radiation_testing_framework/prog/trace_arm_event");
 	ring_buffer__free(rb_arm);
-	cpu_monitor_bpf__destroy(arm_skel);
+	arm_monitor_bpf__destroy(arm_skel);
 	if (arm_config->param2) {
 		free(arm_config->param2);
 	}

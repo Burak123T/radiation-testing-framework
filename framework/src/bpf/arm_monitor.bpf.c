@@ -9,13 +9,13 @@ struct {
 } arm_events SEC(".maps");
 
 SEC("tracepoint/ras/arm_event")
-int trace_mce_event(struct trace_event_raw_arm_event *ctx) {
+int trace_arm_event(struct trace_event_raw_arm_event *ctx) {
     arm_event_t *event;
     
     event = bpf_ringbuf_reserve(&arm_events, sizeof(arm_event_t), 0);
     if (!event) return 0;
 
-    event->timestamp = bpf_ktime_get_ns();
+    event->time = bpf_ktime_get_ns();
     event->cpu = bpf_get_smp_processor_id();
 
     event->mpidr = ctx->mpidr;

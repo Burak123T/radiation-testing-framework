@@ -29,13 +29,13 @@ typedef struct {
 
 // ARM event structure
 typedef struct {
-    uint64_t timestamp;
+    uint64_t time;
     uint8_t cpu;
-    u64 mpidr;                 // Multiprocessor Affinity Register
-	u64 midr;                  // Main ID Register
-	u32 running_state;
-	u32 psci_state;            // Power State Coordination Interface
-	u8 affinity;
+    uint64_t mpidr;                 // Multiprocessor Affinity Register
+	uint64_t midr;                  // Main ID Register
+	uint32_t running_state;
+	uint32_t psci_state;            // Power State Coordination Interface
+	uint8_t affinity;
 } arm_event_t;
 
 #endif // EVENT_TYPES_H
