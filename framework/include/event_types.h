@@ -53,4 +53,16 @@ typedef struct {
 	uint32_t __data_loc_driver_detail;
 } mc_event_t;
 
+// Non-Standard event structure
+typedef struct {
+    uint64_t time;
+    uint8_t cpu;
+    char sec_type[16]; // Section type
+    char fru_id[16];
+	uint32_t __data_loc_fru_text;
+	uint8_t sev; // Severity
+	uint32_t len;
+	uint32_t __data_loc_buf;
+} ns_event_t;
+
 #endif // EVENT_TYPES_H

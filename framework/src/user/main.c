@@ -13,7 +13,7 @@
 
 // Global registry of available handlers
 handler_t *g_available_handlers[] = {
-	&mem_handler, &storage_handler, &uprobe_handler, &arm_handler, &mc_handler,
+	&mem_handler, &storage_handler, &uprobe_handler, &arm_handler, &mc_handler, &ns_handler,
 	NULL // Sentinel
 };
 
