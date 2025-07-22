@@ -12,7 +12,7 @@ struct {
     __uint(max_entries, 4096);
 } ns_events SEC(".maps");
 
-SEC("tracepoint/ras/ns_event")
+SEC("tracepoint/ras/non_standard_event")
 int trace_ns_event(struct trace_event_raw_non_standard_event *ctx) {
     ns_event_t *event;
     
