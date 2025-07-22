@@ -18,7 +18,7 @@ int handle_mc_event(void *ctx, void *data, uint64_t data_sz)
 	mc_event_t *event = data;
 	char *log_string = (char *)malloc(256);
 	sprintf(log_string,
-		"[RAS mc_event] cpu: %d | time: %ld | error_count: %d | event_type: %d | mc_index: %d | address: %ld | syndrome: %lu | data_loc_msg: %u | data_loc_label: %u | data_loc_driver_details: %u",
+		"[RAS mc_event] cpu: %d | time: %ld | error_count: %d | event_type: %d |\n mc_index: %d | address: %ld | syndrome: %lu | data_loc_msg: %u |\n data_loc_label: %u | data_loc_driver_details: %u",
 		event->cpu, event->time, event->error_count, event->error_type, event->mc_index,
 		event->address, event->syndrome, event->__data_loc_msg, event->__data_loc_label,
 		event->__data_loc_driver_detail);
