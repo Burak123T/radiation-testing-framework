@@ -53,4 +53,10 @@ typedef struct {
 	uint32_t __data_loc_driver_detail;
 } mc_event_t;
 
+// CUDA Operations event structure
+typedef struct {
+    uint8_t cpu;            // host (CPU)
+    uint8_t gpu;            // device (GPU)
+} cuda_event_t;
+
 #endif // EVENT_TYPES_H
