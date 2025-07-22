@@ -1,0 +1,1 @@
+sudo ./build/radiation_testing_framework -v -c framework/configs/all.ini

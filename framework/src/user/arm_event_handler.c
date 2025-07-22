@@ -7,7 +7,7 @@
 #include "arm_monitor.skel.h"
 
 static struct arm_monitor_bpf *arm_skel;
-static struct ring_buffer *rb_arm;
+static struct ring_buffer *rb_mc;
 static arm_handler_config_t *arm_config;
 
 int handle_arm_event(void *ctx, void *data, uint64_t data_sz)
@@ -16,7 +16,7 @@ int handle_arm_event(void *ctx, void *data, uint64_t data_sz)
 	char *log_string = (char *)malloc(128);
 
 	sprintf(log_string, 
-	"[RAS arm_event] affinity level: %d; MPIDR: %016llx; MIDR: %016llx; running state: %d; PSCI state: %d", 
+	"[RAS arm_event] affinity level: %d; MPIDR: %016lx; MIDR: %016lx; running state: %d; PSCI state: %d", 
 	event->affinity, event->mpidr, event->midr, event->running_state, event->psci_state);
 	logger_log(log_string);
 	free(log_string);
@@ -41,9 +41,9 @@ int setup_arm_monitor()
 		return -1;
 	}
 
-	rb_arm = ring_buffer__new(bpf_map__fd(arm_skel->maps.arm_events), handle_arm_event, NULL,
+	rb_mc = ring_buffer__new(bpf_map__fd(arm_skel->maps.arm_events), handle_arm_event, NULL,
 				  NULL);
-	if (!rb_arm) {
+	if (!rb_mc) {
 		fprintf(stderr, "Failed to create ring buffer for ARM events\n");
 		return -1;
 	}
@@ -65,7 +65,7 @@ int setup_arm_monitor()
 
 int poll_arm_events()
 {
-	return ring_buffer__poll(rb_arm, 100);
+	return ring_buffer__poll(rb_mc, 100);
 }
 
 void cleanup_arm_monitor()
@@ -76,7 +76,7 @@ void cleanup_arm_monitor()
 	// unping the programs
 	bpf_program__unpin(arm_skel->progs.trace_arm_event,
 			   "/sys/fs/bpf/radiation_testing_framework/prog/trace_arm_event");
-	ring_buffer__free(rb_arm);
+	ring_buffer__free(rb_mc);
 	arm_monitor_bpf__destroy(arm_skel);
 	if (arm_config->param2) {
 		free(arm_config->param2);

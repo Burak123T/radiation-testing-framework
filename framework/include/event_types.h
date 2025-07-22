@@ -38,4 +38,19 @@ typedef struct {
 	uint8_t affinity;
 } arm_event_t;
 
+// MC (Memory Controller) event structure
+typedef struct {
+    uint64_t time;
+    uint8_t cpu;
+    unsigned int error_type;
+    uint32_t __data_loc_msg;         // data location of error message
+	uint32_t __data_loc_label;       // data location of error label
+	uint16_t error_count;
+	uint8_t mc_index;
+	long int address;
+	uint8_t grain_bits;
+	long int syndrome;
+	uint32_t __data_loc_driver_detail;
+} mc_event_t;
+
 #endif // EVENT_TYPES_H
