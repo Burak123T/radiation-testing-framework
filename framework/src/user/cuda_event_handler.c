@@ -15,7 +15,7 @@ int handle_cuda_event(void *ctx, void *data, uint64_t data_sz)
 	char *log_string = (char *)malloc(100);
 
 	sprintf(log_string, 
-		"[CUDA] cpu: %u", event->cpu);
+		"[CUDA] CPU: %u | PID: %u | Time: %lu ns", event->cpu, event->pid, event->time);
 		logger_log(log_string);
 		free(log_string);
 

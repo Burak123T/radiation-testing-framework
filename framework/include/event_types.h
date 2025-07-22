@@ -56,7 +56,8 @@ typedef struct {
 // CUDA Operations event structure
 typedef struct {
     uint8_t cpu;            // host (CPU)
-    uint8_t gpu;            // device (GPU)
+    uint64_t time;
+    uint32_t pid; 
 } cuda_event_t;
 
 #endif // EVENT_TYPES_H
