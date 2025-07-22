@@ -42,6 +42,11 @@ typedef struct {
 	char *param2;
 } ns_handler_config_t;
 
+typedef struct {
+	int param1;
+	char *param2;
+} aer_handler_config_t;
+
 // Declare the handlers
 extern handler_t arm_handler;
 extern handler_t mem_handler;
@@ -49,6 +54,7 @@ extern handler_t storage_handler;
 extern handler_t uprobe_handler;
 extern handler_t mc_handler;
 extern handler_t ns_handler;
+extern handler_t aer_handler;
 
 static int create_directory_if_not_exists(const char *path)
 {

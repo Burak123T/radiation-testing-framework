@@ -57,12 +57,21 @@ typedef struct {
 typedef struct {
     uint64_t time;
     uint8_t cpu;
-    char sec_type[16]; // Section type
+    char sec_type[16];              // Section type
     char fru_id[16];
-	uint32_t __data_loc_fru_text;
-	uint8_t sev; // Severity
+	uint32_t __data_loc_fru_text;   // Data location of FRU text
+	uint8_t sev;                    // Severity
 	uint32_t len;
 	uint32_t __data_loc_buf;
 } ns_event_t;
+
+// AER trace event
+typedef struct {
+    uint64_t time;
+    uint8_t cpu;
+    uint32_t __data_loc_dev_name;   // Data location of device name
+    uint32_t status;
+    uint8_t severity;
+} aer_event_t;
 
 #endif // EVENT_TYPES_H
