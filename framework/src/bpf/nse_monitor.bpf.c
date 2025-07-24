@@ -12,6 +12,16 @@ struct {
     __uint(max_entries, 4096);
 } ns_events SEC(".maps");
 
+/**
+ * Helper function to decode the "__data_loc_fru_text" field from the Non-standard Event tracepoint.
+ * Help found thanks to Github issue: https://github.com/bpftrace/bpftrace/issues/385
+ */
+int decode_nse_data_loc(ns_event_t *event){
+    unsigned short offset = event->__data_loc_fru_text & 0xFFFF;
+    unsigned short length = event->__data_loc_fru_text >> 16;
+    return bpf_probe_read_kernel_str(event->fru_text, length, (char*)event + offset);
+}
+
 SEC("tracepoint/ras/non_standard_event")
 int trace_ns_event(struct trace_event_raw_non_standard_event *ctx) {
     ns_event_t *event;
@@ -30,17 +40,6 @@ int trace_ns_event(struct trace_event_raw_non_standard_event *ctx) {
     return 0;
 }
 
-char LICENSE[] SEC("license") = "GPL";
 
-/*
-struct trace_event_raw_non_standard_event {
-	struct trace_entry ent;
-	char sec_type[16];
-	char fru_id[16];
-	u32 __data_loc_fru_text;
-	u8 sev;
-	u32 len;
-	u32 __data_loc_buf;
-	char __data[0];
-};
-*/
+
+char LICENSE[] SEC("license") = "GPL";

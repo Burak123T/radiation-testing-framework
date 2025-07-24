@@ -60,6 +60,7 @@ typedef struct {
     char sec_type[16];              // Section type
     char fru_id[16];
 	uint32_t __data_loc_fru_text;   // Data location of FRU text
+    char* fru_text;
 	uint8_t sev;                    // Severity
 	uint32_t len;
 	uint32_t __data_loc_buf;
@@ -72,6 +73,7 @@ typedef struct {
     uint32_t __data_loc_dev_name;   // Data location of device name
     uint32_t status;
     uint8_t severity;
+    char* dev_name;
 } aer_event_t;
 
 #endif // EVENT_TYPES_H

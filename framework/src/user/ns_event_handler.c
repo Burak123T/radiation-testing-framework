@@ -6,7 +6,7 @@
 #include "../../include/logger.h"
 #include "nse_monitor.skel.h"
 
-static struct nse_monitor_bpf *ns_skel;
+static struct nse_monitor_bpf *nse_skel;
 static struct ring_buffer *rb_mc;
 static ns_handler_config_t *ns_config;
 
@@ -16,7 +16,7 @@ int handle_ns_event(void *ctx, void *data, uint64_t data_sz)
 	char *log_string = (char *)malloc(128);
 
 	sprintf(log_string, 
-	"[RAS ns_event] CPU: %u | Severity: %d | Section Type: %pU | FRU ID: %pU | Length: %d", event->cpu, event->sev, event->sec_type, event->fru_id, event->len);
+	"[RAS ns_event] CPU: %u | Severity: %d | Section Type: %pU | FRU ID: %pU | FRU Text: %s | Length: %d", event->cpu, event->sev, event->sec_type, event->fru_id, event->fru_text, event->len);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
@@ -29,18 +29,18 @@ int setup_nse_monitor()
 		.object_name = "nse_monitor",
 	};
 
-	ns_skel = nse_monitor_bpf__open_opts(&opts);
-	if (!ns_skel) {
+	nse_skel = nse_monitor_bpf__open_opts(&opts);
+	if (!nse_skel) {
 		fprintf(stderr, "Failed to open ns monitor BPF program\n");
 		return -1;
 	}
 
-	if (nse_monitor_bpf__load(ns_skel) || nse_monitor_bpf__attach(ns_skel)) {
+	if (nse_monitor_bpf__load(nse_skel) || nse_monitor_bpf__attach(nse_skel)) {
 		fprintf(stderr, "Failed to load or attach ns monitor BPF program\n");
 		return -1;
 	}
 
-	rb_mc = ring_buffer__new(bpf_map__fd(ns_skel->maps.ns_events), handle_ns_event, NULL,
+	rb_mc = ring_buffer__new(bpf_map__fd(nse_skel->maps.ns_events), handle_ns_event, NULL,
 				  NULL);
 	if (!rb_mc) {
 		fprintf(stderr, "Failed to create ring buffer for ns events\n");
@@ -51,12 +51,12 @@ int setup_nse_monitor()
 
 	// pin all of the maps
 	create_directory_if_not_exists("/sys/fs/bpf/radiation_testing_framework/map");
-	bpf_map__pin(ns_skel->maps.ns_events,
+	bpf_map__pin(nse_skel->maps.ns_events,
 		     "/sys/fs/bpf/radiation_testing_framework/map/ns_events");
 
 	// pin all of the programs
 	create_directory_if_not_exists("/sys/fs/bpf/radiation_testing_framework/prog");
-	bpf_program__pin(ns_skel->progs.trace_ns_event,
+	bpf_program__pin(nse_skel->progs.trace_ns_event,
 			 "/sys/fs/bpf/radiation_testing_framework/prog/trace_ns_event");
 
 	return 0;
@@ -70,13 +70,13 @@ int poll_ns_events()
 void cleanup_nse_monitor()
 {
 	// unpin the maps
-	bpf_map__unpin(ns_skel->maps.ns_events,
+	bpf_map__unpin(nse_skel->maps.ns_events,
 		       "/sys/fs/bpf/radiation_testing_framework/map/ns_events");
 	// unping the programs
-	bpf_program__unpin(ns_skel->progs.trace_ns_event,
+	bpf_program__unpin(nse_skel->progs.trace_ns_event,
 			   "/sys/fs/bpf/radiation_testing_framework/prog/trace_ns_event");
 	ring_buffer__free(rb_mc);
-	nse_monitor_bpf__destroy(ns_skel);
+	nse_monitor_bpf__destroy(nse_skel);
 	if (ns_config->param2) {
 		free(ns_config->param2);
 	}

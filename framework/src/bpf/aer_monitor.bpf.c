@@ -9,8 +9,18 @@
 
 struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
-    __uint(max_entries, 4096);
+    __uint(max_entries, 2*4096);
 } aer_events SEC(".maps");
+
+/**
+ * Helper function to decode the "__data_loc_dev_name" field from the AER tracepoint.
+ * Help found thanks to Github issue: https://github.com/bpftrace/bpftrace/issues/385
+ */
+int decode_aer_data_loc(aer_event_t *event){
+    unsigned short offset = event->__data_loc_dev_name & 0xFFFF;
+    unsigned short length = event->__data_loc_dev_name >> 16;
+    return bpf_probe_read_kernel_str(event->dev_name, length, (char*)event + offset);
+}
 
 SEC("tracepoint/ras/aer_event")
 int trace_aer_event(struct trace_event_raw_aer_event *ctx) {
@@ -26,8 +36,12 @@ int trace_aer_event(struct trace_event_raw_aer_event *ctx) {
     event->severity = ctx->severity;
     event->status = ctx->status;
 
+    int isDecodedDataLoc = decode_aer_data_loc(event);
+
     bpf_ringbuf_submit(event, 0);
+    
     return 0;
 }
+
 
 char LICENSE[] SEC("license") = "GPL";
