@@ -15,8 +15,10 @@ int handle_ns_event(void *ctx, void *data, uint64_t data_sz)
 	ns_event_t *event = data;
 	char *log_string = (char *)malloc(128);
 
-	sprintf(log_string, 
-	"[RAS ns_event] CPU: %u | Severity: %d | Section Type: %pU | FRU ID: %pU | FRU Text: %s | Length: %d", event->cpu, event->sev, event->sec_type, event->fru_id, event->fru_text, event->len);
+	sprintf(log_string,
+		"[RAS ns_event] CPU: %u | Severity: %d | Section Type: %pU | FRU ID: %pU | FRU Text: %s | Length: %d",
+		event->cpu, event->sev, event->sec_type, event->fru_id, event->fru_text,
+		event->len);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
@@ -41,7 +43,7 @@ int setup_nse_monitor()
 	}
 
 	rb_mc = ring_buffer__new(bpf_map__fd(nse_skel->maps.ns_events), handle_ns_event, NULL,
-				  NULL);
+				 NULL);
 	if (!rb_mc) {
 		fprintf(stderr, "Failed to create ring buffer for ns events\n");
 		return -1;
@@ -98,8 +100,7 @@ int add_ns_config_key(const char *name, const char *value)
 	} else if (strcmp(name, "param2") == 0) {
 		ns_config->param2 = (char *)malloc(strlen(value) + 1);
 		if (!ns_config->param2) {
-			fprintf(stderr,
-				"Failed to allocate memory for ns handler config param2\n");
+			fprintf(stderr, "Failed to allocate memory for ns handler config param2\n");
 			return 0; // error
 		}
 		strcpy(ns_config->param2, value);

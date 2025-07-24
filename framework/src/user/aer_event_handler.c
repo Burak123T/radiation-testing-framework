@@ -18,8 +18,8 @@ int handle_aer_event(void *ctx, void *data, uint64_t data_sz)
 	aer_event_t *event = data;
 	char *log_string = (char *)malloc(128);
 
-	sprintf(log_string, 
-	"[RAS aer_event] CPU: %u | Severity: %u | Device Name: %s", event->cpu, event->severity, event->dev_name);
+	sprintf(log_string, "[RAS aer_event] CPU: %u | Severity: %u | Device Name: %s", event->cpu,
+		event->severity, event->dev_name);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
