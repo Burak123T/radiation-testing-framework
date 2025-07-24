@@ -44,25 +44,39 @@ typedef struct {
     uint8_t cpu;
     unsigned int error_type;
     uint32_t __data_loc_msg;         // data location of error message
+    char* msg;
 	uint32_t __data_loc_label;       // data location of error label
+    char* label;
 	uint16_t error_count;
 	uint8_t mc_index;
 	long int address;
 	uint8_t grain_bits;
 	long int syndrome;
 	uint32_t __data_loc_driver_detail;
+    char* driver_detail;
 } mc_event_t;
 
 // Non-Standard event structure
 typedef struct {
     uint64_t time;
     uint8_t cpu;
-    char sec_type[16]; // Section type
+    char sec_type[16];              // Section type
     char fru_id[16];
-	uint32_t __data_loc_fru_text;
-	uint8_t sev; // Severity
+	uint32_t __data_loc_fru_text;   // Data location of FRU text
+    char* fru_text;
+	uint8_t sev;                    // Severity
 	uint32_t len;
 	uint32_t __data_loc_buf;
 } ns_event_t;
+
+// AER trace event
+typedef struct {
+    uint64_t time;
+    uint8_t cpu;
+    uint32_t __data_loc_dev_name;   // Data location of device name
+    uint32_t status;
+    uint8_t severity;
+    char* dev_name;
+} aer_event_t;
 
 #endif // EVENT_TYPES_H
