@@ -12,7 +12,7 @@ struct {
  * Helper function to decode the "__data_loc_fru_text" field from the Non-standard Event tracepoint.
  * Help found thanks to Github issue: https://github.com/bpftrace/bpftrace/issues/385
  */
-int decode_nse_data_loc(ns_event_t *event){
+int decode_arm_data_loc(ns_event_t *event){
     unsigned short offset = event->__data_loc_fru_text & 0xFFFF;
     unsigned short length = event->__data_loc_fru_text >> 16;
     return bpf_probe_read_kernel(event->fru_text, length, (char*)event + offset);
