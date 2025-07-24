@@ -76,7 +76,7 @@ typedef struct {
     uint32_t __data_loc_dev_name;   // Data location of device name
     uint32_t status;
     uint8_t severity;
-    char* dev_name;
+    char dev_name[];
 } aer_event_t;
 
 #endif // EVENT_TYPES_H
