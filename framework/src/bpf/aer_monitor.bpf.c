@@ -9,7 +9,7 @@
 
 struct {
     __uint(type, BPF_MAP_TYPE_RINGBUF);
-    __uint(max_entries, 2*4096);
+    __uint(max_entries, 4096);
 } aer_events SEC(".maps");
 
 /**
@@ -19,7 +19,7 @@ struct {
 int decode_aer_data_loc(aer_event_t *event){
     unsigned short offset = event->__data_loc_dev_name & 0xFFFF;
     unsigned short length = event->__data_loc_dev_name >> 16;
-    return bpf_probe_read_kernel_str(event->dev_name, length, (char*)event + offset);
+    return bpf_probe_read_kernel(event->dev_name, length, (char*)event + offset);
 }
 
 SEC("tracepoint/ras/aer_event")

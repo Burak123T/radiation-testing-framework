@@ -8,6 +8,16 @@ struct {
     __uint(max_entries, 4096);
 } arm_events SEC(".maps");
 
+/**
+ * Helper function to decode the "__data_loc_fru_text" field from the Non-standard Event tracepoint.
+ * Help found thanks to Github issue: https://github.com/bpftrace/bpftrace/issues/385
+ */
+int decode_nse_data_loc(ns_event_t *event){
+    unsigned short offset = event->__data_loc_fru_text & 0xFFFF;
+    unsigned short length = event->__data_loc_fru_text >> 16;
+    return bpf_probe_read_kernel(event->fru_text, length, (char*)event + offset);
+}
+
 SEC("tracepoint/ras/arm_event")
 int trace_arm_event(struct trace_event_raw_arm_event *ctx) {
     arm_event_t *event;
