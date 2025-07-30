@@ -15,6 +15,11 @@ typedef struct {
 typedef struct {
 	int param1;
 	char *param2;
+} cpu_handler_config_t;
+
+typedef struct {
+	int param1;
+	char *param2;
 } arm_handler_config_t;
 
 typedef struct {
@@ -48,6 +53,7 @@ typedef struct {
 } aer_handler_config_t;
 
 // Declare the handlers
+extern handler_t cpu_handler;
 extern handler_t arm_handler;
 extern handler_t mem_handler;
 extern handler_t storage_handler;
