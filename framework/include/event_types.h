@@ -57,6 +57,13 @@ typedef struct {
     char* driver_detail;
 } mc_event_t;
 
+// CUDA Operations event structure
+typedef struct {
+    uint8_t cpu;            // host (CPU)
+    uint64_t time;
+    uint32_t pid; 
+} cuda_event_t;
+
 // Non-Standard event structure
 typedef struct {
     uint64_t time;
@@ -79,11 +86,5 @@ typedef struct {
     uint8_t severity;
     char dev_name[];
 } aer_event_t;
-// CUDA Operations event structure
-typedef struct {
-    uint8_t cpu;            // host (CPU)
-    uint64_t time;
-    uint32_t pid; 
-} cuda_event_t;
 
 #endif // EVENT_TYPES_H
