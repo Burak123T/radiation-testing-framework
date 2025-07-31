@@ -28,10 +28,28 @@ void decode_mc_data_loc(mc_event_t *event){
 }
 */
 
+
 SEC("tracepoint/ras/mc_event")
-int trace_mc_event(void *ctx) {
-    bpf_printk("mc event triggered");
+int trace_mc_event(struct trace_event_raw_mc_event *ctx) {
+    mc_event_t *event;
     
+    event = bpf_ringbuf_reserve(&mc_events, sizeof(mc_event_t), 0);
+    if (!event) return 0;
+
+    event->time = bpf_ktime_get_ns();
+    event->cpu = bpf_get_smp_processor_id();
+
+    event->error_type = ctx->error_type;
+    event->__data_loc_msg = ctx->__data_loc_msg;
+    event->__data_loc_label = ctx->__data_loc_label;
+    event->error_count = ctx->error_count;
+    event->mc_index = ctx->mc_index;
+    event->address = ctx->address;
+    event->grain_bits = ctx->grain_bits;
+    event->syndrome = ctx->syndrome;
+    event->__data_loc_driver_detail = ctx->__data_loc_driver_detail;
+
+    bpf_ringbuf_submit(event, 0);
     return 0;
 }
 
