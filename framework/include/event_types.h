@@ -16,6 +16,7 @@ typedef struct {
     uint64_t page;       // Affected memory page (pfn)
     uint32_t error_type; // Correctable/Uncorrectable
     uint32_t pid;        // Process ID affected
+    int result;          // Result of recovery action
 } mem_event_t;
 
 // Storage I/O event structure

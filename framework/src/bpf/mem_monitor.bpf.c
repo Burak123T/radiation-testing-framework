@@ -19,6 +19,7 @@ int trace_memory_failure(struct trace_event_raw_memory_failure_event *ctx) {
     event->page = ctx->pfn;
     event->error_type = ctx->type;
     event->pid = bpf_get_current_pid_tgid() >> 32;
+    event->result = ctx->result;
 
     bpf_ringbuf_submit(event, 0);
     return 0;

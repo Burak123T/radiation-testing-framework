@@ -14,8 +14,8 @@ int handle_mem_event(void *ctx, void *data, uint64_t data_sz)
 {
 	mem_event_t *event = data;
 	char *log_string = (char *)malloc(100);
-	sprintf(log_string, "[MEMORY ERROR] Page: %lu | Type: %u | PID: %u | Time: %lu ns\n",
-		event->page, event->error_type, event->pid, event->timestamp);
+	sprintf(log_string, "[MEMORY ERROR] Page: %lu | Type: %u | PID: %u | Time: %lu ns | Result: %i\n",
+		event->page, event->error_type, event->pid, event->timestamp, event->result);
 	logger_log(log_string);
 	free(log_string);
 	return 0;
