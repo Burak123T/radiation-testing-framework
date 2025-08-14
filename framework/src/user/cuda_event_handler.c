@@ -9,6 +9,11 @@
 static struct cuda_monitor_bpf *cuda_skel;
 static cuda_handler_config_t *cuda_config;
 
+static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
+{
+	return vfprintf(stderr, format, args);
+}
+
 int handle_cuda_event(void *ctx, void *data, uint64_t data_sz)
 {
 	cuda_event_t *event = data;

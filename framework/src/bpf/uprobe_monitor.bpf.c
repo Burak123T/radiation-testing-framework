@@ -23,8 +23,21 @@ int BPF_KPROBE(uprobe_start, int event_id, const char *event_name, const char *e
 	bpf_probe_read_str(event_data_copy, sizeof(event_data_copy), event_data);
 
 	bpf_printk(
-		"uprobed_start ENTRY: event_id = %d, event_name = %s, event_type = %s, event_data = %s",
-		event_id, event_name_copy, event_type_copy, event_data_copy);
+		"uprobed_start ENTRY: event_id = %d",
+		event_id);
+
+	bpf_printk(
+		"uprobed_start ENTRY: event_name = %s",
+		event_name_copy);
+
+	bpf_printk(
+		"uprobed_start ENTRY: event_type = %s",
+		event_type_copy);
+
+	bpf_printk(
+		"uprobed_start ENTRY: event_data = %s",
+		event_data_copy);
+
 	return 0;
 }
 
