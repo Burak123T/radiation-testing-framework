@@ -8,6 +8,7 @@ struct {
     __uint(max_entries, 4096);
 } arm_events SEC(".maps");
 
+
 SEC("tracepoint/ras/arm_event")
 int trace_arm_event(struct trace_event_raw_arm_event *ctx) {
     arm_event_t *event;
